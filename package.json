@@ -1,0 +1,34 @@
+{
+  "name": "yt-sub-fetch",
+  "version": "1.0.0",
+  "description": "A lightweight and efficient CLI tool for fetching YouTube subtitles or transcripts effortlessly.",
+  "main": "src/cli.js",
+  "bin": {
+    "yt-sub-fetch": "src/cli.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Aung Myo Kyaw",
+  "license": "MIT",
+  "type": "module",
+  "keywords": [
+    "YouTube",
+    "transcript",
+    "subtitles",
+    "fetch",
+    "YouTube-subtitles",
+    "YouTube-transcript",
+    "subtitle-fetcher",
+    "transcript-fetcher",
+    "YouTube-CLI",
+    "video-transcript",
+    "subtitle-downloader",
+    "text-fetch",
+    "subtitle-parser",
+    "video-text",
+    "caption",
+    "CLI-tool",
+    "YouTube-automation"
+  ]
+}
