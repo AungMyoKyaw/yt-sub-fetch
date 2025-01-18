@@ -23,9 +23,9 @@ async function main() {
   const langCode = args[1] || "en"; // Default language code is English
 
   try {
-    const { videoID } = parseYouTubeURL(url); // Parse the URL
+    const { youtubeURL } = parseYouTubeURL(url); // Parse the URL
 
-    const rawTranscript = await fetchTranscript(url, langCode); // Fetch the transcript
+    const rawTranscript = await fetchTranscript(youtubeURL, langCode); // Fetch the transcript
 
     const formattedTranscript = formatTranscript(rawTranscript); // Format the transcript
     console.log(formattedTranscript);
