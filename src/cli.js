@@ -6,29 +6,50 @@
  */
 
 import process from "process";
-import { parseYouTubeURL } from "./utils/parseYouTubeURL.js"; // Import the URL parser
-import { fetchTranscript } from "./utils/fetchTranscript.js"; // Import the transcript fetcher
-import { formatTranscript } from "./utils/formatTranscript.js"; // Import the transcript formatter
+import { parseYouTubeURL } from "./utils/parseYouTubeURL.js";
+import { fetchTranscript } from "./utils/fetchTranscript.js";
+import { formatTranscript } from "./utils/formatTranscript.js";
+import { copyToClipboard } from "./utils/copyToClipboard.js";
 
-// CLI entry point
+/**
+ * CLI entry point
+ */
 async function main() {
   const args = process.argv.slice(2);
 
   if (args.length === 0) {
-    console.error("Usage: cli.js <YouTube URL> [langCode]");
+    console.error("Usage: cli.js <YouTube URL> [langCode] [--copy]");
     process.exit(1);
   }
 
-  const url = args[0];
-  const langCode = args[1] || "en"; // Default language code is English
+  const shouldCopyIndex = args.indexOf("--copy");
+  const shouldCopy = shouldCopyIndex !== -1;
+
+  // Remove --copy from args to prevent issues
+  if (shouldCopy) {
+    args.splice(shouldCopyIndex, 1);
+  }
+
+  const url = args.find((arg) => arg.startsWith("http"));
+  const langCode =
+    args.find((arg) => !arg.startsWith("http") && arg !== "--copy") || "en";
+
+  if (!url) {
+    console.error("Error: Invalid or missing YouTube URL.");
+    process.exit(1);
+  }
 
   try {
-    const { youtubeURL } = parseYouTubeURL(url); // Parse the URL
+    const { youtubeURL } = parseYouTubeURL(url);
+    const rawTranscript = await fetchTranscript(youtubeURL, langCode);
+    const formattedTranscript = formatTranscript(rawTranscript);
 
-    const rawTranscript = await fetchTranscript(youtubeURL, langCode); // Fetch the transcript
-
-    const formattedTranscript = formatTranscript(rawTranscript); // Format the transcript
     console.log(formattedTranscript);
+
+    if (shouldCopy) {
+      copyToClipboard(formattedTranscript);
+      console.log("Transcript copied to clipboard!");
+    }
 
     process.exit(0);
   } catch (error) {
