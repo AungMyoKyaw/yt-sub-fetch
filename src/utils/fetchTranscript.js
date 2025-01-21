@@ -1,46 +1,33 @@
-import https from "https";
+import axios from "axios";
 
 /**
- * Makes an HTTPS POST request to fetch YouTube transcript data.
+ * Makes an HTTPS POST request to fetch YouTube transcript data, mimicking a real browser.
  * @param {string} videoUrl - The YouTube video URL.
  * @param {string} langCode - The language code for the transcript.
  * @returns {Promise<Object>} The parsed JSON response from the API.
  */
-function fetchTranscript(videoUrl, langCode = "en") {
-  const options = {
-    hostname: "tactiq-apps-prod.tactiq.io",
-    path: "/transcript",
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+async function fetchTranscript(videoUrl, langCode = "en") {
+  const url = "https://tactiq-apps-prod.tactiq.io/transcript";
+
+  const headers = {
+    "User-Agent":
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    Referer: "https://www.youtube.com/",
+    Accept: "application/json, text/plain, */*",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Accept-Encoding": "gzip, deflate, br",
+    Connection: "keep-alive",
+    "Content-Type": "application/json",
   };
 
-  return new Promise((resolve, reject) => {
-    const req = https.request(options, (res) => {
-      let data = "";
+  try {
+    const response = await axios.post(url, { videoUrl, langCode }, { headers });
 
-      res.on("data", (chunk) => {
-        data += chunk;
-      });
-
-      res.on("end", () => {
-        try {
-          const parsedData = JSON.parse(data);
-          resolve(parsedData);
-        } catch (error) {
-          reject(new Error("Failed to parse response JSON"));
-        }
-      });
-    });
-
-    req.on("error", (error) => {
-      reject(error);
-    });
-
-    req.write(JSON.stringify({ videoUrl, langCode }));
-    req.end();
-  });
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw new Error(`Error fetching transcript: ${error.message}`);
+  }
 }
 
 export { fetchTranscript };
