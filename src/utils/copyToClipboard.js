@@ -21,7 +21,6 @@ function copyToClipboard(text) {
 
     const sanitizedText = text.replace(/"/g, '\\"');
     execSync(`echo "${sanitizedText}" | ${copyCommand}`);
-    console.log("Text successfully copied to clipboard.");
   } catch (error) {
     console.error("Error copying text to clipboard:", error.message);
   }

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { formatTranscript } from "./formatTranscript.js";
 
 /**
  * Makes an HTTPS POST request to fetch YouTube transcript data, mimicking a real browser.
@@ -6,7 +7,7 @@ import axios from "axios";
  * @param {string} langCode - The language code for the transcript.
  * @returns {Promise<Object>} The parsed JSON response from the API.
  */
-async function fetchTranscript(videoUrl, langCode = "en") {
+async function fetchTranscriptAPI(videoUrl, langCode = "en") {
   const url = "https://tactiq-apps-prod.tactiq.io/transcript";
 
   const headers = {
@@ -23,11 +24,11 @@ async function fetchTranscript(videoUrl, langCode = "en") {
   try {
     const response = await axios.post(url, { videoUrl, langCode }, { headers });
 
-    return response.data;
+    return formatTranscript(response.data);
   } catch (error) {
     console.log(error);
     throw new Error(`Error fetching transcript: ${error.message}`);
   }
 }
 
-export { fetchTranscript };
+export { fetchTranscriptAPI };

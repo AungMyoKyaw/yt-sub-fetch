@@ -7,8 +7,8 @@
 
 import process from "process";
 import { parseYouTubeURL } from "./utils/parseYouTubeURL.js";
-import { fetchTranscript } from "./utils/fetchTranscript.js";
-import { formatTranscript } from "./utils/formatTranscript.js";
+import { fetchTranscriptAPI } from "./utils/fetchTranscriptAPI.js";
+import { crawlYouTubeTranscript } from "./utils/crawlTranscript.js";
 import { copyToClipboard } from "./utils/copyToClipboard.js";
 
 /**
@@ -41,14 +41,24 @@ async function main() {
 
   try {
     const { youtubeURL } = parseYouTubeURL(url);
-    const rawTranscript = await fetchTranscript(youtubeURL, langCode);
-    const formattedTranscript = formatTranscript(rawTranscript);
+    let transcript;
 
-    console.log(formattedTranscript);
+    try {
+      transcript = await fetchTranscriptAPI(youtubeURL, langCode);
+    } catch (apiError) {
+      console.warn(
+        "fetchTranscriptAPI failed, retrying with getYouTubeTranscript...",
+      );
+      transcript = await crawlYouTubeTranscript(youtubeURL, langCode);
+    }
+
+    console.log(transcript);
 
     if (shouldCopy) {
-      copyToClipboard(formattedTranscript);
+      copyToClipboard(transcript);
+      console.log("---");
       console.log("Transcript copied to clipboard!");
+      console.log("---");
     }
 
     process.exit(0);
