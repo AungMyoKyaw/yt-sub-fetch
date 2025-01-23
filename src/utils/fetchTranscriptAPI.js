@@ -26,7 +26,6 @@ async function fetchTranscriptAPI(videoUrl, langCode = "en") {
 
     return formatTranscript(response.data);
   } catch (error) {
-    console.log(error);
     throw new Error(`Error fetching transcript: ${error.message}`);
   }
 }
